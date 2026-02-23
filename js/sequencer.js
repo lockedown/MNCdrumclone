@@ -119,7 +119,7 @@ class Sequencer {
     }
 
     _updateGridColumns() {
-        const col = `140px repeat(${this.stepCount}, 1fr)`;
+        const col = `120px repeat(${this.stepCount}, 1fr)`;
         document.documentElement.style.setProperty('--grid-cols', col);
     }
 

@@ -34,7 +34,7 @@ body {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding: 8px 12px 28px;
+    padding: 4px 12px 4px;
 }
 
 /* ===== Layout ===== */
@@ -42,22 +42,22 @@ body {
     background: var(--bg-deep);
     border: 2px solid var(--accent);
     border-radius: 12px;
-    padding: 12px 16px;
+    padding: 8px 14px;
     box-shadow: 0 0 50px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.3);
-    max-width: 1880px;
+    max-width: 960px;
     width: 100%;
 }
 
 header {
     text-align: center;
-    margin-bottom: 10px;
+    margin-bottom: 4px;
 }
 
 h1 {
-    font-size: 1.4em;
+    font-size: 1.2em;
     font-weight: bold;
     text-shadow: 0 0 20px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.5);
-    margin-bottom: 8px;
+    margin-bottom: 4px;
     letter-spacing: 3px;
 }
 
@@ -67,7 +67,7 @@ h1 {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 1px;
 }
 
 .rotary-knob .rotary-label {
@@ -254,9 +254,9 @@ h1 {
 .fx-strip {
     display: flex;
     justify-content: center;
-    gap: 16px;
-    margin-bottom: 6px;
-    padding: 6px 14px;
+    gap: 14px;
+    margin-bottom: 4px;
+    padding: 4px 14px;
     background: var(--bg-panel);
     border: 1px solid var(--accent-dark);
     border-radius: 8px;
@@ -378,8 +378,8 @@ h1 {
     display: flex;
     justify-content: center;
     gap: 30px;
-    margin-bottom: 4px;
-    font-size: 0.6em;
+    margin-bottom: 2px;
+    font-size: 0.55em;
     color: #888;
     letter-spacing: 0.5px;
 }
@@ -388,8 +388,8 @@ h1 {
 .sequencer {
     display: flex;
     flex-direction: column;
-    gap: 2px;
-    margin-top: 6px;
+    gap: 1px;
+    margin-top: 2px;
 }
 
 .step-numbers {
@@ -408,9 +408,9 @@ h1 {
     background: var(--bg-panel);
     border: 1px solid #444;
     border-radius: 3px;
-    padding: 2px 0;
+    padding: 1px 0;
     text-align: center;
-    font-size: 0.6em;
+    font-size: 0.55em;
     font-weight: bold;
     color: #888;
 }
@@ -432,17 +432,17 @@ h1 {
     background: var(--bg-panel);
     border: 1px solid var(--accent);
     border-radius: 4px;
-    padding: 2px 2px;
+    padding: 1px 2px;
     text-align: center;
     font-weight: bold;
-    font-size: 0.55em;
+    font-size: 0.5em;
     letter-spacing: 0.5px;
     text-transform: uppercase;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 1px;
+    gap: 0px;
 }
 
 .drum-name {
@@ -462,11 +462,11 @@ h1 {
 }
 
 .drum-knobs .rotary-knob {
-    --knob-size: 18px;
+    --knob-size: 14px;
 }
 
 .drum-knobs .rotary-knob .rotary-label {
-    font-size: 0.6em;
+    font-size: 0.5em;
 }
 
 .drum-knobs .rotary-knob .rotary-indicator {
@@ -477,7 +477,7 @@ h1 {
 .btn-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 2px;
+    gap: 1px;
     align-self: center;
     flex-shrink: 0;
 }
@@ -485,8 +485,8 @@ h1 {
 /* Euclidean fill + Randomize row buttons */
 .euclid-btn,
 .random-row-btn {
-    width: 16px;
-    height: 16px;
+    width: 13px;
+    height: 13px;
     border-radius: 50%;
     border: 1px solid var(--accent);
     background: var(--bg-deep);
@@ -510,8 +510,8 @@ h1 {
 /* Mute / Solo buttons */
 .mute-btn,
 .solo-btn {
-    width: 16px;
-    height: 16px;
+    width: 13px;
+    height: 13px;
     border-radius: 50%;
     border: 1px solid #666;
     background: var(--bg-deep);
@@ -556,7 +556,8 @@ h1 {
     border: 1px solid #444;
     border-radius: 4px;
     width: 100%;
-    aspect-ratio: 1.6;
+    aspect-ratio: 1;
+    max-height: 48px;
     cursor: pointer;
     transition: all 0.15s ease;
     position: relative;
@@ -719,8 +720,8 @@ h1 {
 /* ===== Footer ===== */
 .app-footer {
     text-align: center;
-    padding: 6px 0 4px;
-    font-size: 0.6em;
+    padding: 3px 0 2px;
+    font-size: 0.55em;
     color: var(--text-dim, #666);
     letter-spacing: 0.05em;
     opacity: 0.5;

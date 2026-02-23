@@ -1,0 +1,726 @@
+/* ===== Theme Variables ===== */
+:root {
+    --accent-h: 18;
+    --accent-s: 100%;
+    --accent-l: 60%;
+    --accent: hsl(var(--accent-h), var(--accent-s), var(--accent-l));
+    --accent-light: hsl(var(--accent-h), var(--accent-s), 70%);
+    --accent-dark: hsl(var(--accent-h), var(--accent-s), 30%);
+    --accent-dim: hsl(var(--accent-h), var(--accent-s), 45%);
+    --accent-active: hsl(var(--accent-h), 100%, 45%);
+    --bg-deep: hsl(var(--accent-h), 50%, 4%);
+    --bg-panel: hsl(var(--accent-h), 50%, 7%);
+    --bg-body-1: hsl(var(--accent-h), 40%, 12%);
+    --bg-body-2: hsl(var(--accent-h), 50%, 6%);
+    --knob-track: #2a2a2a;
+    --knob-size: 36px;
+    --knob-size-sm: 28px;
+    --knob-size-lg: 44px;
+}
+
+/* ===== Reset & Base ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(135deg, var(--bg-body-1) 0%, var(--bg-body-2) 100%);
+    color: var(--accent);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+/* ===== Layout ===== */
+.container {
+    background: var(--bg-deep);
+    border: 3px solid var(--accent);
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 0 50px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.3);
+    max-width: 1200px;
+    width: 100%;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h1 {
+    font-size: 2.5em;
+    font-weight: bold;
+    text-shadow: 0 0 20px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.5);
+    margin-bottom: 20px;
+    letter-spacing: 3px;
+}
+
+/* ===== Rotary Knob Base ===== */
+.rotary-knob {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.rotary-knob .rotary-label {
+    font-size: 0.7em;
+    font-weight: bold;
+    color: #888;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.rotary-knob .rotary-value {
+    font-size: 0.65em;
+    font-weight: bold;
+    color: var(--accent);
+    min-width: 24px;
+    text-align: center;
+}
+
+.rotary-knob .rotary-wrap {
+    position: relative;
+    width: var(--knob-size);
+    height: var(--knob-size);
+}
+
+.rotary-knob .rotary-wrap input[type="range"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+    margin: 0;
+}
+
+.rotary-knob .rotary-visual {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: conic-gradient(
+        from 220deg,
+        var(--accent) 0deg,
+        var(--accent) calc(var(--val, 0) * 280deg),
+        var(--knob-track) calc(var(--val, 0) * 280deg),
+        var(--knob-track) 280deg,
+        transparent 280deg
+    );
+    pointer-events: none;
+    box-shadow:
+        inset 0 0 0 3px var(--bg-deep),
+        0 0 8px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.25);
+}
+
+.rotary-knob .rotary-visual::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 60%;
+    height: 60%;
+    transform: translate(-50%, -50%);
+    background: var(--bg-deep);
+    border-radius: 50%;
+    border: 1px solid #333;
+}
+
+.rotary-knob .rotary-indicator {
+    position: absolute;
+    width: 2px;
+    height: 35%;
+    background: var(--accent);
+    top: 4px;
+    left: 50%;
+    transform-origin: bottom center;
+    transform: translateX(-50%) rotate(calc(-140deg + var(--val, 0) * 280deg));
+    border-radius: 1px;
+    pointer-events: none;
+    z-index: 1;
+    filter: drop-shadow(0 0 3px var(--accent));
+}
+
+/* Size variants */
+.rotary-knob.knob-sm .rotary-wrap {
+    width: var(--knob-size-sm);
+    height: var(--knob-size-sm);
+}
+
+.rotary-knob.knob-lg .rotary-wrap {
+    width: var(--knob-size-lg);
+    height: var(--knob-size-lg);
+}
+
+/* ===== Header Controls ===== */
+.controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 24px;
+    flex-wrap: wrap;
+}
+
+.control-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+}
+
+/* Preset dropdown */
+.preset-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+}
+
+.preset-control label {
+    font-size: 0.7em;
+    font-weight: bold;
+    color: #888;
+    letter-spacing: 0.5px;
+}
+
+#preset-select {
+    background: var(--bg-panel);
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 0.8em;
+    cursor: pointer;
+    outline: none;
+    letter-spacing: 0.5px;
+}
+
+#preset-select option {
+    background: var(--bg-deep);
+    color: var(--accent);
+}
+
+/* Playback buttons */
+.playback-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.playback-controls button {
+    background: var(--accent);
+    color: var(--bg-deep);
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 0.8em;
+}
+
+.playback-controls button:hover {
+    background: var(--accent-light);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.4);
+}
+
+.playback-controls button:active {
+    transform: translateY(0);
+}
+
+.playback-controls button.active {
+    background: var(--accent-active);
+    box-shadow: 0 0 20px hsla(var(--accent-h), 100%, 45%, 0.6);
+}
+
+/* ===== FX Strip ===== */
+.fx-strip {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 12px;
+    padding: 12px 20px;
+    background: var(--bg-panel);
+    border: 1px solid var(--accent-dark);
+    border-radius: 8px;
+}
+
+.fx-group {
+    display: flex;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.fx-label {
+    font-weight: bold;
+    font-size: 0.75em;
+    letter-spacing: 1px;
+    color: var(--accent);
+    writing-mode: vertical-lr;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    margin-right: 2px;
+}
+
+.fx-group select {
+    background: var(--bg-deep);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 0.75em;
+    cursor: pointer;
+    outline: none;
+    align-self: center;
+}
+
+.delay-time-select {
+    background: var(--bg-deep);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 0.75em;
+    cursor: pointer;
+    outline: none;
+    align-self: center;
+}
+
+.delay-time-select option {
+    background: var(--bg-deep);
+    color: var(--accent);
+}
+
+.fx-divider {
+    width: 1px;
+    height: 50px;
+    background: var(--accent-dark);
+    align-self: center;
+}
+
+/* Save/Load controls */
+.save-load-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 4px;
+    border: 1px solid var(--accent);
+    background: var(--bg-deep);
+    color: var(--accent);
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    align-self: center;
+}
+
+.save-load-btn:hover {
+    background: var(--accent);
+    color: var(--bg-deep);
+}
+
+.save-load-btn.delete-btn {
+    border-color: #f44;
+    color: #f44;
+    font-size: 0.8em;
+}
+
+.save-load-btn.delete-btn:hover {
+    background: #f44;
+    color: var(--bg-deep);
+}
+
+.save-load-select {
+    background: var(--bg-deep);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    border-radius: 4px;
+    padding: 4px 6px;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 0.7em;
+    cursor: pointer;
+    outline: none;
+    align-self: center;
+    max-width: 120px;
+}
+
+.save-load-select option {
+    background: var(--bg-deep);
+    color: var(--accent);
+}
+
+/* ===== Velocity Legend ===== */
+.velocity-legend {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    margin-bottom: 10px;
+    font-size: 0.7em;
+    color: #888;
+    letter-spacing: 0.5px;
+}
+
+/* ===== Sequencer Grid ===== */
+.sequencer {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 20px;
+}
+
+.step-numbers {
+    display: grid;
+    grid-template-columns: var(--grid-cols, 140px repeat(16, 1fr));
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.step-numbers::before {
+    content: '';
+    display: block;
+}
+
+.step-number {
+    background: var(--bg-panel);
+    border: 1px solid #444;
+    border-radius: 4px;
+    padding: 6px 0;
+    text-align: center;
+    font-size: 0.75em;
+    font-weight: bold;
+    color: #888;
+}
+
+.step-number:nth-child(4n+1) {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.drum-row {
+    display: grid;
+    grid-template-columns: var(--grid-cols, 140px repeat(16, 1fr));
+    gap: 4px;
+    align-items: center;
+}
+
+/* ===== Drum Label + Knobs ===== */
+.drum-label {
+    background: var(--bg-panel);
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 4px 3px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 0.6em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 2px;
+}
+
+.drum-name {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    font-size: 1.1em;
+}
+
+.drum-knobs {
+    display: flex;
+    gap: 2px;
+    align-items: flex-end;
+    width: 100%;
+    justify-content: center;
+}
+
+.drum-knobs .rotary-knob {
+    --knob-size: 24px;
+}
+
+.drum-knobs .rotary-knob .rotary-label {
+    font-size: 0.7em;
+}
+
+.drum-knobs .rotary-knob .rotary-indicator {
+    height: 30%;
+}
+
+/* 2x2 button grid for E, R, M, S */
+.btn-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    align-self: center;
+    flex-shrink: 0;
+}
+
+/* Euclidean fill + Randomize row buttons */
+.euclid-btn,
+.random-row-btn {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid var(--accent);
+    background: var(--bg-deep);
+    color: var(--accent);
+    font-size: 0.7em;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.15s ease;
+}
+
+.euclid-btn:hover,
+.random-row-btn:hover {
+    background: var(--accent);
+    color: var(--bg-deep);
+    transform: scale(1.15);
+}
+
+/* Mute / Solo buttons */
+.mute-btn,
+.solo-btn {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    border: 1px solid #666;
+    background: var(--bg-deep);
+    color: #666;
+    font-size: 0.6em;
+    font-weight: bold;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+    transition: all 0.15s ease;
+}
+
+.mute-btn:hover { border-color: #f44; color: #f44; }
+.solo-btn:hover { border-color: #fc0; color: #fc0; }
+
+.mute-btn.active {
+    background: #f44;
+    color: var(--bg-deep);
+    border-color: #f44;
+}
+
+.solo-btn.active {
+    background: #fc0;
+    color: var(--bg-deep);
+    border-color: #fc0;
+}
+
+/* Muted row dim */
+.drum-row.muted {
+    opacity: 0.3;
+    transition: opacity 0.15s ease;
+}
+
+/* ===== Step Buttons ===== */
+.step-buttons {
+    display: contents;
+}
+
+.step-btn {
+    background: var(--bg-panel);
+    border: 2px solid #444;
+    border-radius: 6px;
+    width: 100%;
+    aspect-ratio: 1;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+    padding: 0;
+}
+
+.step-btn:hover {
+    border-color: var(--accent);
+    transform: scale(1.05);
+}
+
+/* Velocity levels */
+.step-btn.vel-1 {
+    background: var(--accent-dark);
+    border-color: var(--accent-dark);
+    box-shadow: 0 0 5px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.2);
+}
+
+.step-btn.vel-2 {
+    background: var(--accent-dim);
+    border-color: var(--accent-dim);
+    box-shadow: 0 0 10px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.4);
+}
+
+.step-btn.vel-3 {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 15px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.6);
+}
+
+/* Playhead indicator */
+.step-btn.current {
+    border-color: #00ff00;
+    box-shadow: 0 0 20px rgba(0, 255, 0, 0.6);
+    animation: pulse 0.3s ease;
+}
+
+.step-btn.current.vel-1 {
+    background: var(--accent-dark);
+    border-color: #00ff00;
+}
+
+.step-btn.current.vel-2 {
+    background: var(--accent-dim);
+    border-color: #00ff00;
+}
+
+.step-btn.current.vel-3 {
+    background: var(--accent);
+    border-color: #00ff00;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* ===== Color Picker ===== */
+.color-picker-toggle {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid var(--accent);
+    background: var(--accent);
+    cursor: pointer;
+    transition: transform 0.2s;
+    flex-shrink: 0;
+}
+
+.color-picker-toggle:hover {
+    transform: scale(1.15);
+}
+
+.color-picker-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 10px;
+    background: var(--bg-deep);
+    border: 2px solid var(--accent);
+    border-radius: 12px;
+    padding: 16px;
+    z-index: 100;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+}
+
+.color-picker-popup.open {
+    display: block;
+}
+
+.color-picker-wrapper {
+    position: relative;
+}
+
+#color-wheel {
+    cursor: crosshair;
+    border-radius: 50%;
+    display: block;
+}
+
+#color-wheel-indicator {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    pointer-events: none;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 0 4px rgba(0,0,0,0.5);
+}
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+    .container {
+        padding: 15px;
+    }
+    
+    h1 {
+        font-size: 1.8em;
+    }
+    
+    .controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .fx-strip {
+        flex-wrap: wrap;
+        gap: 16px;
+    }
+    
+    .step-numbers,
+    .drum-row {
+        gap: 3px;
+    }
+    
+    .drum-label {
+        font-size: 0.6em;
+        padding: 4px 2px;
+    }
+
+    .drum-knobs .rotary-knob {
+        --knob-size: 20px;
+    }
+    
+    .step-number {
+        font-size: 0.65em;
+        padding: 4px 0;
+    }
+}
+
+/* ===== Footer ===== */
+.app-footer {
+    text-align: center;
+    padding: 12px 0 8px;
+    font-size: 0.7em;
+    color: var(--text-dim, #666);
+    letter-spacing: 0.05em;
+    opacity: 0.6;
+}

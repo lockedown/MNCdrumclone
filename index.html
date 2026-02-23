@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TR-808 Drum Machine Clone</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>TR-808 CLONE</h1>
+            <div class="controls">
+                <div class="control-group">
+                    <div class="rotary-knob knob-lg">
+                        <span class="rotary-label">TEMPO</span>
+                        <div class="rotary-wrap">
+                            <input type="range" id="tempo" min="60" max="180" value="120" data-sensitivity="300">
+                            <div class="rotary-visual"></div>
+                            <div class="rotary-indicator"></div>
+                        </div>
+                        <span class="rotary-value" id="tempo-display">120</span>
+                    </div>
+                    <div class="rotary-knob">
+                        <span class="rotary-label">SWING</span>
+                        <div class="rotary-wrap">
+                            <input type="range" id="swing" min="0" max="75" value="0">
+                            <div class="rotary-visual"></div>
+                            <div class="rotary-indicator"></div>
+                        </div>
+                        <span class="rotary-value" id="swing-display">0%</span>
+                    </div>
+                    <div class="rotary-knob">
+                        <span class="rotary-label">STEPS</span>
+                        <div class="rotary-wrap">
+                            <input type="range" id="steps" min="1" max="32" value="16">
+                            <div class="rotary-visual"></div>
+                            <div class="rotary-indicator"></div>
+                        </div>
+                        <span class="rotary-value" id="steps-display">16</span>
+                    </div>
+                </div>
+                <div class="preset-control">
+                    <label for="preset-select">PATTERN</label>
+                    <select id="preset-select">
+                        <option value="rock">Rock</option>
+                        <option value="pop">Pop</option>
+                        <option value="disco">Disco</option>
+                        <option value="funk">Funk</option>
+                        <option value="hiphop">Hip Hop</option>
+                        <option value="reggae">Reggae</option>
+                        <option value="samba">Samba</option>
+                        <option value="bossanova">Bossa Nova</option>
+                    </select>
+                </div>
+                <div class="playback-controls">
+                    <button id="play-btn">PLAY</button>
+                    <button id="stop-btn">STOP</button>
+                    <button id="clear-btn">CLEAR</button>
+                    <button id="random-btn" title="Randomize pattern">&#x1F3B2;</button>
+                </div>
+                <div class="color-picker-wrapper">
+                    <button class="color-picker-toggle" id="color-toggle" title="Change colour"></button>
+                    <div class="color-picker-popup" id="color-popup">
+                        <canvas id="color-wheel" width="160" height="160"></canvas>
+                        <div id="color-wheel-indicator"></div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="fx-strip">
+            <div class="fx-group">
+                <label class="fx-label">DIST</label>
+                <div class="rotary-knob knob-sm">
+                    <span class="rotary-label">DRIVE</span>
+                    <div class="rotary-wrap">
+                        <input type="range" id="distortion-drive" min="0" max="100" value="0" data-sensitivity="300">
+                        <div class="rotary-visual"></div>
+                        <div class="rotary-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fx-divider"></div>
+            <div class="fx-group">
+                <label class="fx-label">FILTER</label>
+                <select id="filter-type">
+                    <option value="lowpass">LP</option>
+                    <option value="highpass">HP</option>
+                    <option value="bandpass">BP</option>
+                </select>
+                <div class="rotary-knob knob-sm">
+                    <span class="rotary-label">CUTOFF</span>
+                    <div class="rotary-wrap">
+                        <input type="range" id="filter-cutoff" min="0" max="100" value="100" data-sensitivity="400">
+                        <div class="rotary-visual"></div>
+                        <div class="rotary-indicator"></div>
+                    </div>
+                </div>
+                <div class="rotary-knob knob-sm">
+                    <span class="rotary-label">RES</span>
+                    <div class="rotary-wrap">
+                        <input type="range" id="filter-res" min="0" max="30" value="0" step="0.5" data-sensitivity="350">
+                        <div class="rotary-visual"></div>
+                        <div class="rotary-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fx-divider"></div>
+            <div class="fx-group">
+                <label class="fx-label">REVERB</label>
+                <div class="rotary-knob knob-sm">
+                    <span class="rotary-label">MIX</span>
+                    <div class="rotary-wrap">
+                        <input type="range" id="reverb-mix" min="0" max="100" value="0" data-sensitivity="300">
+                        <div class="rotary-visual"></div>
+                        <div class="rotary-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fx-divider"></div>
+            <div class="fx-group">
+                <label class="fx-label">DELAY</label>
+                <select id="delay-time" class="delay-time-select">
+                    <option value="0.25">1/4</option>
+                    <option value="0.125" selected>1/8</option>
+                    <option value="0.167">1/8T</option>
+                    <option value="0.0625">1/16</option>
+                    <option value="0.083">1/16T</option>
+                </select>
+                <div class="rotary-knob knob-sm">
+                    <span class="rotary-label">FB</span>
+                    <div class="rotary-wrap">
+                        <input type="range" id="delay-feedback" min="0" max="90" value="0" data-sensitivity="300">
+                        <div class="rotary-visual"></div>
+                        <div class="rotary-indicator"></div>
+                    </div>
+                </div>
+                <div class="rotary-knob knob-sm">
+                    <span class="rotary-label">MIX</span>
+                    <div class="rotary-wrap">
+                        <input type="range" id="delay-mix" min="0" max="100" value="0" data-sensitivity="300">
+                        <div class="rotary-visual"></div>
+                        <div class="rotary-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fx-divider"></div>
+            <div class="fx-group save-group">
+                <label class="fx-label">SAVE</label>
+                <button id="save-btn" class="save-load-btn" title="Save pattern">&#x1F4BE;</button>
+                <select id="load-select" class="save-load-select">
+                    <option value="">-- load --</option>
+                </select>
+                <button id="delete-btn" class="save-load-btn delete-btn" title="Delete saved pattern">&#x2715;</button>
+            </div>
+        </div>
+
+        <div class="velocity-legend">
+            <span>Left-click: cycle velocity (off / low / med / high)</span>
+            <span>Right-click: cycle velocity down</span>
+        </div>
+
+        <main>
+            <!-- Step numbers and drum rows are generated by js/sequencer.js -->
+            <div class="sequencer"></div>
+        </main>
+    </div>
+
+    <footer class="app-footer">
+        <span id="app-version"></span> · &copy; MNCWare 2026
+    </footer>
+
+    <script src="js/constants.js"></script>
+    <script src="js/presets.js"></script>
+    <script src="js/euclidean.js"></script>
+    <script src="js/rotary-knob.js"></script>
+    <script src="js/audio-engine.js"></script>
+    <script src="js/color-wheel.js"></script>
+    <script src="js/sequencer.js"></script>
+    <script src="js/keyboard.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

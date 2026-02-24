@@ -38,11 +38,13 @@ function _bindRotaryDrag(input) {
         document.body.style.userSelect = 'none';
     });
 
+    wrap.style.touchAction = 'none';
     wrap.addEventListener('touchstart', (e) => {
+        e.preventDefault();
         dragging = true;
         startY = e.touches[0].clientY;
         startVal = parseFloat(input.value);
-    }, { passive: true });
+    }, { passive: false });
 
     function onMove(clientY) {
         if (!dragging) return;
@@ -61,8 +63,11 @@ function _bindRotaryDrag(input) {
 
     document.addEventListener('mousemove', (e) => onMove(e.clientY));
     document.addEventListener('touchmove', (e) => {
-        if (dragging) onMove(e.touches[0].clientY);
-    }, { passive: true });
+        if (dragging) {
+            e.preventDefault();
+            onMove(e.touches[0].clientY);
+        }
+    }, { passive: false });
 
     function onEnd() {
         if (dragging) {

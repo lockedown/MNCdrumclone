@@ -264,7 +264,7 @@ h1 {
 
 .fx-group {
     display: flex;
-    align-items: flex-end;
+    align-items: center;
     gap: 10px;
 }
 

@@ -9,16 +9,25 @@ document.addEventListener('DOMContentLoaded', () => {
     visualiser._drawIdle();
     document.getElementById('app-version').textContent = 'v' + APP_VERSION;
 
-    // B13: iOS Safari requires AudioContext.resume() inside a user gesture
+    // B13: iOS Safari requires AudioContext.resume() + silent buffer inside a user gesture
     const unlockAudio = () => {
-        if (audioEngine.context.state === 'suspended') {
-            audioEngine.context.resume();
+        const ctx = audioEngine.context;
+        if (ctx.state === 'suspended') {
+            ctx.resume();
         }
+        // Play a silent buffer to fully unlock iOS audio pipeline
+        const buf = ctx.createBuffer(1, 1, ctx.sampleRate);
+        const src = ctx.createBufferSource();
+        src.buffer = buf;
+        src.connect(ctx.destination);
+        src.start(0);
         document.removeEventListener('touchstart', unlockAudio);
+        document.removeEventListener('touchend', unlockAudio);
         document.removeEventListener('click', unlockAudio);
     };
-    document.addEventListener('touchstart', unlockAudio, { once: true });
-    document.addEventListener('click', unlockAudio, { once: true });
+    document.addEventListener('touchstart', unlockAudio);
+    document.addEventListener('touchend', unlockAudio);
+    document.addEventListener('click', unlockAudio);
 
     // F15: Register service worker for PWA / offline support
     if ('serviceWorker' in navigator) {

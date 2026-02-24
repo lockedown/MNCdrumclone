@@ -687,9 +687,9 @@ class Sequencer {
         this.isPlaying ? this.stop() : this.play();
     }
 
-    async play() {
+    play() {
         if (this.isPlaying) return;
-        await this.audio.resume();
+        this.audio.resume();
 
         this.isPlaying = true;
         this.currentStep = 0;

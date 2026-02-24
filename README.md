@@ -17,6 +17,7 @@ Kick, Snare, Hi-Hat, Open Hat, Clap, Cowbell, Tom Lo, Tom Mid, Tom Hi, Rimshot, 
 - Per-instrument **Volume**, **Pitch** (±12 semitones), and **Decay** knobs
 
 ### Effects Chain
+- **Compressor** — threshold, ratio, knee controls on master bus
 - **Distortion** — waveshaper with quadratic drive curve
 - **Filter** — LP / HP / BP with logarithmic cutoff and resonance
 - **Reverb** — convolution reverb with sqrt mix curve
@@ -30,7 +31,11 @@ Kick, Snare, Hi-Hat, Open Hat, Clap, Cowbell, Tom Lo, Tom Mid, Tom Hi, Rimshot, 
   - `1`–`9`, `0`, `-` — trigger drums
   - `Shift` + number — toggle mute
   - `Arrow Up / Down` — nudge tempo
-- **Color wheel** — customizable accent color
+- **Master volume** knob
+- **Color wheel** — customizable accent color (persisted across sessions)
+- **Waveform visualiser** — real-time oscilloscope display
+- **PWA / offline support** — installable, works without internet
+- **Mobile-optimised layout** — responsive design with touch-friendly controls
 
 ## Getting Started
 
@@ -40,9 +45,6 @@ No build step required. Serve the files with any static server:
 ```bash
 # Python
 python -m http.server 8000
-
-# Node.js
-npx serve .
 
 # PHP
 php -S localhost:8000
@@ -62,6 +64,9 @@ Then open `http://localhost:8000` in your browser.
 ```
 ├── index.html          # Main HTML
 ├── style.css           # All styles
+├── manifest.json       # PWA manifest
+├── sw.js               # Service worker (offline caching)
+├── icons/              # PWA icons (192×192, 512×512)
 ├── js/
 │   ├── constants.js    # Global constants, drum definitions
 │   ├── presets.js      # Built-in drum patterns
@@ -69,6 +74,7 @@ Then open `http://localhost:8000` in your browser.
 │   ├── rotary-knob.js  # Custom rotary knob UI
 │   ├── audio-engine.js # Web Audio synthesis & FX chain
 │   ├── color-wheel.js  # Accent color picker
+│   ├── visualiser.js   # Waveform oscilloscope
 │   ├── sequencer.js    # Pattern grid, scheduling, state
 │   ├── keyboard.js     # Keyboard shortcuts
 │   └── app.js          # Entry point
@@ -79,6 +85,7 @@ Then open `http://localhost:8000` in your browser.
 - **Vanilla JavaScript** — no frameworks
 - **Web Audio API** — all sounds synthesized in real-time
 - **CSS Variables** — dynamic theming
+- **Service Worker** — offline-capable PWA
 
 ## License
 © MNCWare 2026

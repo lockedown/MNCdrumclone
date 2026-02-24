@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Browser-based TR-808 drum machine clone with Web Audio synthesis, effects, and sequencer.">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon-192.png">
     <title>TR-808 Drum Machine Clone</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -78,6 +84,34 @@
         </header>
 
         <div class="fx-strip">
+            <div class="fx-group">
+                <label class="fx-label">COMP</label>
+                <div class="rotary-knob knob-sm">
+                    <span class="rotary-label">THRESH</span>
+                    <div class="rotary-wrap">
+                        <input type="range" id="comp-threshold" min="-60" max="0" value="-12" data-sensitivity="300">
+                        <div class="rotary-visual"></div>
+                        <div class="rotary-indicator"></div>
+                    </div>
+                </div>
+                <div class="rotary-knob knob-sm">
+                    <span class="rotary-label">RATIO</span>
+                    <div class="rotary-wrap">
+                        <input type="range" id="comp-ratio" min="1" max="20" value="4" data-sensitivity="300">
+                        <div class="rotary-visual"></div>
+                        <div class="rotary-indicator"></div>
+                    </div>
+                </div>
+                <div class="rotary-knob knob-sm">
+                    <span class="rotary-label">KNEE</span>
+                    <div class="rotary-wrap">
+                        <input type="range" id="comp-knee" min="0" max="40" value="10" data-sensitivity="300">
+                        <div class="rotary-visual"></div>
+                        <div class="rotary-indicator"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="fx-divider"></div>
             <div class="fx-group">
                 <label class="fx-label">DIST</label>
                 <div class="rotary-knob knob-sm">
@@ -164,6 +198,8 @@
             </div>
         </div>
 
+        <canvas id="visualiser" width="800" height="60"></canvas>
+
         <div class="velocity-legend">
             <span>Left-click: cycle velocity (off / low / med / high)</span>
             <span>Right-click: cycle velocity down</span>
@@ -185,6 +221,7 @@
     <script src="js/rotary-knob.js"></script>
     <script src="js/audio-engine.js"></script>
     <script src="js/color-wheel.js"></script>
+    <script src="js/visualiser.js"></script>
     <script src="js/sequencer.js"></script>
     <script src="js/keyboard.js"></script>
     <script src="js/app.js"></script>

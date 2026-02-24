@@ -5,8 +5,16 @@ class AudioEngine {
         this.context = new (window.AudioContext || window.webkitAudioContext)();
         this._noiseBuffer = this._createNoiseBuffer();
 
-        // FX chain: master → distortion → filter → reverb → delay → destination
+        // FX chain: master → compressor → distortion → filter → reverb → delay → analyser → destination
         this.master = this.context.createGain();
+
+        // Compressor (F13)
+        this.compressor = this.context.createDynamicsCompressor();
+        this.compressor.threshold.value = -12;
+        this.compressor.knee.value = 10;
+        this.compressor.ratio.value = 4;
+        this.compressor.attack.value = 0.003;
+        this.compressor.release.value = 0.25;
 
         // Distortion (waveshaper)
         this.distortion = this.context.createWaveShaper();
@@ -46,9 +54,14 @@ class AudioEngine {
         this._delayDry.gain.value = 1;
         this._delayWet.gain.value = 0;
 
-        // Wire: master → distortion → filter → reverbDry  → reverbOut
-        //                                    → reverbWet → convolver → reverbOut
-        this.master.connect(this.distortion);
+        // Analyser (F14)
+        this.analyser = this.context.createAnalyser();
+        this.analyser.fftSize = 2048;
+
+        // Wire: master → compressor → distortion → filter → reverbDry  → reverbOut
+        //                                                 → reverbWet → convolver → reverbOut
+        this.master.connect(this.compressor);
+        this.compressor.connect(this.distortion);
         this.distortion.connect(this.filter);
         this.filter.connect(this._reverbDry);
         this.filter.connect(this._reverbWet);
@@ -60,7 +73,7 @@ class AudioEngine {
         // reverbOut → delayL → feedbackL → delayR → feedbackR → delayL (ping-pong)
         //             delayL → merger(L), delayR → merger(R) → delayWet → destination
         this._reverbOut.connect(this._delayDry);
-        this._delayDry.connect(this.context.destination);
+        this._delayDry.connect(this.analyser);
 
         this._reverbOut.connect(this._delayL);
         this._delayL.connect(this._feedbackL);
@@ -71,7 +84,30 @@ class AudioEngine {
         this._delayL.connect(this._delayMerge, 0, 0);
         this._delayR.connect(this._delayMerge, 0, 1);
         this._delayMerge.connect(this._delayWet);
-        this._delayWet.connect(this.context.destination);
+        this._delayWet.connect(this.analyser);
+        this.analyser.connect(this.context.destination);
+    }
+
+    // --- Compressor control (F13) ---
+
+    setCompThreshold(value) {
+        this.compressor.threshold.setTargetAtTime(value, this.now, 0.01);
+    }
+
+    setCompRatio(value) {
+        this.compressor.ratio.setTargetAtTime(value, this.now, 0.01);
+    }
+
+    setCompKnee(value) {
+        this.compressor.knee.setTargetAtTime(value, this.now, 0.01);
+    }
+
+    // --- Analyser (F14) ---
+
+    getWaveformData() {
+        const data = new Uint8Array(this.analyser.frequencyBinCount);
+        this.analyser.getByteTimeDomainData(data);
+        return data;
     }
 
     // --- Distortion control ---

@@ -1,7 +1,8 @@
 // Sequencer: manages pattern state, Web Audio scheduled playback, and UI
 class Sequencer {
-    constructor(audioEngine) {
+    constructor(audioEngine, visualiser) {
         this.audio = audioEngine;
+        this.visualiser = visualiser;
         this.tempo = DEFAULT_TEMPO;
         this.swing = DEFAULT_SWING;
         this.stepCount = STEP_COUNT;
@@ -207,6 +208,17 @@ class Sequencer {
         this.audio.master.gain.value = parseInt(masterVolSlider.value) / 100;
         masterVolSlider.addEventListener('input', (e) => {
             this.audio.master.gain.setTargetAtTime(parseInt(e.target.value) / 100, this.audio.now, 0.01);
+        });
+
+        // Compressor (F13)
+        document.getElementById('comp-threshold').addEventListener('input', (e) => {
+            this.audio.setCompThreshold(parseFloat(e.target.value));
+        });
+        document.getElementById('comp-ratio').addEventListener('input', (e) => {
+            this.audio.setCompRatio(parseFloat(e.target.value));
+        });
+        document.getElementById('comp-knee').addEventListener('input', (e) => {
+            this.audio.setCompKnee(parseFloat(e.target.value));
         });
 
         // Distortion
@@ -453,6 +465,9 @@ class Sequencer {
             stepCount: this.stepCount,
             fx: {
                 masterVol: parseFloat(document.getElementById('master-vol').value),
+                compThreshold: parseFloat(document.getElementById('comp-threshold').value),
+                compRatio: parseFloat(document.getElementById('comp-ratio').value),
+                compKnee: parseFloat(document.getElementById('comp-knee').value),
                 distortion: parseFloat(document.getElementById('distortion-drive').value),
                 filterType: document.getElementById('filter-type').value,
                 cutoff: parseFloat(document.getElementById('filter-cutoff').value),
@@ -497,6 +512,18 @@ class Sequencer {
             if (fx.masterVol !== undefined) {
                 document.getElementById('master-vol').value = fx.masterVol;
                 this.audio.master.gain.setTargetAtTime(fx.masterVol / 100, this.audio.now, 0.01);
+            }
+            if (fx.compThreshold !== undefined) {
+                document.getElementById('comp-threshold').value = fx.compThreshold;
+                this.audio.setCompThreshold(fx.compThreshold);
+            }
+            if (fx.compRatio !== undefined) {
+                document.getElementById('comp-ratio').value = fx.compRatio;
+                this.audio.setCompRatio(fx.compRatio);
+            }
+            if (fx.compKnee !== undefined) {
+                document.getElementById('comp-knee').value = fx.compKnee;
+                this.audio.setCompKnee(fx.compKnee);
             }
             if (fx.distortion !== undefined) {
                 document.getElementById('distortion-drive').value = fx.distortion;
@@ -637,6 +664,20 @@ class Sequencer {
             updateRotaryKnob(s);
         });
 
+        // Reset compressor to defaults on preset load
+        const compThreshEl = document.getElementById('comp-threshold');
+        const compRatioEl = document.getElementById('comp-ratio');
+        const compKneeEl = document.getElementById('comp-knee');
+        compThreshEl.value = -12;
+        compRatioEl.value = 4;
+        compKneeEl.value = 10;
+        updateRotaryKnob(compThreshEl);
+        updateRotaryKnob(compRatioEl);
+        updateRotaryKnob(compKneeEl);
+        this.audio.setCompThreshold(-12);
+        this.audio.setCompRatio(4);
+        this.audio.setCompKnee(10);
+
         this._refreshAllSteps();
     }
 
@@ -659,6 +700,7 @@ class Sequencer {
 
         this._startHighlightLoop();
         this._scheduler();
+        if (this.visualiser) this.visualiser.start();
     }
 
     stop() {
@@ -674,6 +716,7 @@ class Sequencer {
         this._highlightIdx = 0;
         this.currentStep = 0;
         this._clearStepHighlight();
+        if (this.visualiser) this.visualiser.stop();
     }
 
     _startHighlightLoop() {

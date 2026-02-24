@@ -13,7 +13,10 @@ class ColorWheel {
 
         this.drawWheel();
         this.setupEvents();
-        this.positionIndicator(18);
+        const savedHue = localStorage.getItem('tr808-accent-hue');
+        const initialHue = savedHue !== null ? parseInt(savedHue) : 18;
+        this.applyHue(initialHue);
+        this.positionIndicator(initialHue);
     }
 
     drawWheel() {
@@ -115,5 +118,6 @@ class ColorWheel {
 
     applyHue(hue) {
         document.documentElement.style.setProperty('--accent-h', hue);
+        localStorage.setItem('tr808-accent-hue', hue);
     }
 }

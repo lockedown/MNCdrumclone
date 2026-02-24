@@ -12,6 +12,16 @@ class Sequencer {
         this._schedulerId = null;
         this._nextStepTime = 0;
 
+        // B1: rAF-based step highlight
+        this._stepTimes = [];
+        this._rafId = null;
+
+        // O1: Cached solo flag
+        this._anySolo = false;
+
+        // O2+O3: Cached step button DOM refs
+        this._stepBtnCache = {};
+
         // Per-instrument state
         this.pattern = {};
         this.volume = {};
@@ -42,6 +52,7 @@ class Sequencer {
         sequencer.innerHTML = '';
 
         this._updateGridColumns();
+        this._stepBtnCache = {};
 
         // Step numbers row
         const numbersRow = document.createElement('div');
@@ -103,15 +114,18 @@ class Sequencer {
             `;
             row.appendChild(label);
 
-            // Step buttons
+            // Step buttons — cache refs for O2+O3
             const buttons = document.createElement('div');
             buttons.className = 'step-buttons';
+            const btnArr = [];
             for (let i = 0; i < this.stepCount; i++) {
                 const btn = document.createElement('button');
                 btn.className = 'step-btn';
                 btn.dataset.step = i;
                 buttons.appendChild(btn);
+                btnArr.push(btn);
             }
+            this._stepBtnCache[drum.id] = btnArr;
             row.appendChild(buttons);
 
             sequencer.appendChild(row);
@@ -186,6 +200,13 @@ class Sequencer {
             const count = parseInt(e.target.value);
             stepsDisplay.textContent = count;
             this.setStepCount(count);
+        });
+
+        // Master volume (F4)
+        const masterVolSlider = document.getElementById('master-vol');
+        this.audio.master.gain.value = parseInt(masterVolSlider.value) / 100;
+        masterVolSlider.addEventListener('input', (e) => {
+            this.audio.master.gain.setTargetAtTime(parseInt(e.target.value) / 100, this.audio.now, 0.01);
         });
 
         // Distortion
@@ -383,12 +404,12 @@ class Sequencer {
 
     toggleSolo(drumId) {
         this.solo[drumId] = !this.solo[drumId];
+        this._anySolo = Object.values(this.solo).some(v => v);
         this._updateMuteSoloUI();
     }
 
     _isDrumAudible(drumId) {
-        const anySolo = Object.values(this.solo).some(v => v);
-        if (anySolo && !this.solo[drumId]) return false;
+        if (this._anySolo && !this.solo[drumId]) return false;
         if (this.mute[drumId]) return false;
         return true;
     }
@@ -431,6 +452,7 @@ class Sequencer {
             swing: this.swing,
             stepCount: this.stepCount,
             fx: {
+                masterVol: parseFloat(document.getElementById('master-vol').value),
                 distortion: parseFloat(document.getElementById('distortion-drive').value),
                 filterType: document.getElementById('filter-type').value,
                 cutoff: parseFloat(document.getElementById('filter-cutoff').value),
@@ -466,12 +488,20 @@ class Sequencer {
         if (data.tempo) this.tempo = data.tempo;
         if (data.swing !== undefined) this.swing = data.swing;
 
+        // O1: Recalculate cached solo flag
+        this._anySolo = Object.values(this.solo).some(v => v);
+
         // Restore FX
         if (data.fx) {
             const fx = data.fx;
+            if (fx.masterVol !== undefined) {
+                document.getElementById('master-vol').value = fx.masterVol;
+                this.audio.master.gain.setTargetAtTime(fx.masterVol / 100, this.audio.now, 0.01);
+            }
             if (fx.distortion !== undefined) {
                 document.getElementById('distortion-drive').value = fx.distortion;
-                this.audio.setDistortion(fx.distortion);
+                const v = fx.distortion / 100;
+                this.audio.setDistortion(v * v * 100);
             }
             if (fx.filterType) {
                 document.getElementById('filter-type').value = fx.filterType;
@@ -487,7 +517,7 @@ class Sequencer {
             }
             if (fx.reverb !== undefined) {
                 document.getElementById('reverb-mix').value = fx.reverb;
-                this.audio.setReverbMix(fx.reverb / 100);
+                this.audio.setReverbMix(Math.sqrt(fx.reverb / 100));
             }
             if (fx.delaySubdiv !== undefined) {
                 this._delaySubdiv = fx.delaySubdiv;
@@ -580,9 +610,32 @@ class Sequencer {
 
         if (preset.tempo) {
             this.tempo = preset.tempo;
-            document.getElementById('tempo').value = this.tempo;
+            const tempoSlider = document.getElementById('tempo');
+            tempoSlider.value = this.tempo;
             document.getElementById('tempo-display').textContent = this.tempo;
+            updateRotaryKnob(tempoSlider);
         }
+
+        // B12: Reset per-instrument knobs to defaults
+        DRUMS.forEach(drum => {
+            this.volume[drum.id] = DEFAULT_VOLUME;
+            this.pitch[drum.id] = DEFAULT_PITCH;
+            this.decay[drum.id] = DEFAULT_DECAY;
+        });
+
+        // Update knob slider values in DOM
+        document.querySelectorAll('.vol-slider').forEach(s => {
+            s.value = DEFAULT_VOLUME * 100;
+            updateRotaryKnob(s);
+        });
+        document.querySelectorAll('.pitch-slider').forEach(s => {
+            s.value = DEFAULT_PITCH;
+            updateRotaryKnob(s);
+        });
+        document.querySelectorAll('.decay-slider').forEach(s => {
+            s.value = DEFAULT_DECAY * 100;
+            updateRotaryKnob(s);
+        });
 
         this._refreshAllSteps();
     }
@@ -600,8 +653,11 @@ class Sequencer {
         this.isPlaying = true;
         this.currentStep = 0;
         this._nextStepTime = this.audio.now + 0.05;
+        this._stepTimes = [];
+        this._highlightIdx = 0;
         document.getElementById('play-btn').classList.add('active');
 
+        this._startHighlightLoop();
         this._scheduler();
     }
 
@@ -613,8 +669,32 @@ class Sequencer {
             clearTimeout(this._schedulerId);
             this._schedulerId = null;
         }
+        this._stopHighlightLoop();
+        this._stepTimes = [];
+        this._highlightIdx = 0;
         this.currentStep = 0;
         this._clearStepHighlight();
+    }
+
+    _startHighlightLoop() {
+        const loop = () => {
+            if (!this.isPlaying) return;
+            const now = this.audio.now;
+            while (this._highlightIdx < this._stepTimes.length &&
+                   this._stepTimes[this._highlightIdx].time <= now) {
+                this._highlightStep(this._stepTimes[this._highlightIdx].step);
+                this._highlightIdx++;
+            }
+            this._rafId = requestAnimationFrame(loop);
+        };
+        this._rafId = requestAnimationFrame(loop);
+    }
+
+    _stopHighlightLoop() {
+        if (this._rafId) {
+            cancelAnimationFrame(this._rafId);
+            this._rafId = null;
+        }
     }
 
     _scheduler() {
@@ -656,11 +736,8 @@ class Sequencer {
             }
         });
 
-        // Schedule UI highlight (approximate — use setTimeout from now)
-        const delay = Math.max(0, (time - this.audio.now) * 1000);
-        setTimeout(() => {
-            if (this.isPlaying) this._highlightStep(step);
-        }, delay);
+        // B1: Push to step times array for rAF-based highlight
+        this._stepTimes.push({ step, time });
     }
 
     clearPattern() {
@@ -677,23 +754,31 @@ class Sequencer {
 
     _refreshAllSteps() {
         DRUMS.forEach(drum => {
-            const row = document.querySelector(`.drum-row[data-drum="${drum.id}"]`);
-            row.querySelectorAll('.step-btn').forEach((btn, i) => {
-                this._setStepClass(btn, this.pattern[drum.id][i]);
-            });
+            const btns = this._stepBtnCache[drum.id];
+            if (!btns) return;
+            for (let i = 0; i < btns.length; i++) {
+                this._setStepClass(btns[i], this.pattern[drum.id][i]);
+            }
         });
     }
 
     _highlightStep(step) {
         this._clearStepHighlight();
-        document.querySelectorAll(`.step-btn[data-step="${step}"]`).forEach(btn => {
-            btn.classList.add('current');
+        this._lastHighlightedStep = step;
+        DRUMS.forEach(drum => {
+            const btns = this._stepBtnCache[drum.id];
+            if (btns && btns[step]) btns[step].classList.add('current');
         });
     }
 
     _clearStepHighlight() {
-        document.querySelectorAll('.step-btn.current').forEach(btn => {
-            btn.classList.remove('current');
-        });
+        const prev = this._lastHighlightedStep;
+        if (prev !== undefined && prev !== null) {
+            DRUMS.forEach(drum => {
+                const btns = this._stepBtnCache[drum.id];
+                if (btns && btns[prev]) btns[prev].classList.remove('current');
+            });
+        }
+        this._lastHighlightedStep = null;
     }
 }

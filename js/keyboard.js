@@ -34,15 +34,15 @@ class KeyboardController {
                 return;
             }
 
-            // 1-6 keys — trigger drums or toggle mute
+            // 1-9, 0, - keys — trigger drums or toggle mute
             const idx = this._drumKeys.indexOf(key);
             if (idx !== -1 && idx < DRUMS.length) {
                 const drum = DRUMS[idx];
                 if (e.shiftKey) {
-                    // Shift+1-6 — toggle mute
+                    // Shift+number — toggle mute
                     this.seq.toggleMute(drum.id);
                 } else {
-                    // 1-6 — trigger drum sound
+                    // Number key — trigger drum sound
                     this.seq.audio.play(
                         drum.id,
                         this.seq.audio.now,

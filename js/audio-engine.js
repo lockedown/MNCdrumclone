@@ -82,7 +82,7 @@ class AudioEngine {
     }
 
     _makeDistortionCurve(amount) {
-        const samples = 44100;
+        const samples = 8192;
         const curve = new Float32Array(samples);
         const k = amount * 4;
         for (let i = 0; i < samples; i++) {
@@ -393,7 +393,7 @@ class AudioEngine {
     }
 
     _createNoiseBuffer() {
-        const length = this.context.sampleRate * 0.5;
+        const length = this.context.sampleRate * 2;
         const buffer = this.context.createBuffer(1, length, this.context.sampleRate);
         const data = buffer.getChannelData(0);
         for (let i = 0; i < length; i++) {

@@ -10,7 +10,7 @@ const DEFAULT_SWING = 0;
 const DEFAULT_PITCH = 0;
 const DEFAULT_DECAY = 0.5;
 
-const APP_VERSION = '2.0';
+const APP_VERSION = '2.1';
 
 const VELOCITY_MAP = { 1: 0.33, 2: 0.66, 3: 1.0 };
 

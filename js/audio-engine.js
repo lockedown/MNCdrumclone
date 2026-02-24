@@ -2,6 +2,10 @@
 // Supports scheduled playback, per-instrument pitch/decay, and a master output bus.
 class AudioEngine {
     constructor() {
+        // iOS: set audio session to 'playback' so sound plays even with silent switch on
+        if (navigator.audioSession) {
+            navigator.audioSession.type = 'playback';
+        }
         this.context = new (window.AudioContext || window.webkitAudioContext)();
         this._noiseBuffer = this._createNoiseBuffer();
 

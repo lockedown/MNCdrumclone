@@ -1,22 +1,22 @@
 // Service Worker for TR-808 Drum Machine PWA (F15)
 const CACHE_NAME = 'tr808-v2.2';
 const ASSETS = [
-    '/',
-    '/index.html',
-    '/style.css',
-    '/manifest.json',
-    '/icons/icon-192.png',
-    '/icons/icon-512.png',
-    '/js/constants.js',
-    '/js/presets.js',
-    '/js/euclidean.js',
-    '/js/rotary-knob.js',
-    '/js/audio-engine.js',
-    '/js/color-wheel.js',
-    '/js/visualiser.js',
-    '/js/sequencer.js',
-    '/js/keyboard.js',
-    '/js/app.js'
+    './',
+    './index.html',
+    './style.css',
+    './manifest.json',
+    './icons/icon-192.png',
+    './icons/icon-512.png',
+    './js/constants.js',
+    './js/presets.js',
+    './js/euclidean.js',
+    './js/rotary-knob.js',
+    './js/audio-engine.js',
+    './js/color-wheel.js',
+    './js/visualiser.js',
+    './js/sequencer.js',
+    './js/keyboard.js',
+    './js/app.js'
 ];
 
 // Install: cache all static assets

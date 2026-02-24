@@ -31,6 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // F15: Register service worker for PWA / offline support
     if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('/sw.js').catch(() => {});
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
 });

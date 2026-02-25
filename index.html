@@ -45,7 +45,7 @@
                         </div>
                         <span class="rotary-value" id="steps-display">16</span>
                     </div>
-                    <div class="rotary-knob">
+                    <div class="rotary-knob knob-lg">
                         <span class="rotary-label">VOLUME</span>
                         <div class="rotary-wrap">
                             <input type="range" id="master-vol" min="0" max="100" value="80">
@@ -67,6 +67,10 @@
                         <option value="bossanova">Bossa Nova</option>
                     </select>
                 </div>
+                <div class="voice-mode-control">
+                    <label>MODE</label>
+                    <button id="voice-mode-btn" class="voice-mode-btn">808</button>
+                </div>
                 <div class="playback-controls">
                     <button id="play-btn">PLAY</button>
                     <button id="stop-btn">STOP</button>
@@ -78,6 +82,18 @@
                     <div class="color-picker-popup" id="color-popup">
                         <canvas id="color-wheel" width="160" height="160"></canvas>
                         <div id="color-wheel-indicator"></div>
+                    </div>
+                </div>
+                <div class="settings-wrapper">
+                    <button class="settings-toggle" id="settings-toggle" title="Settings">&#x2699;</button>
+                    <div class="settings-popup" id="settings-popup">
+                        <div class="settings-row">
+                            <span class="settings-label">Knob drag</span>
+                            <select id="pref-knob-dir">
+                                <option value="vertical">Up / Down</option>
+                                <option value="horizontal">Left / Right</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -151,6 +167,14 @@
             <div class="fx-divider"></div>
             <div class="fx-group">
                 <label class="fx-label">REVERB</label>
+                <div class="rotary-knob knob-sm">
+                    <span class="rotary-label">SIZE</span>
+                    <div class="rotary-wrap">
+                        <input type="range" id="reverb-size" min="0" max="100" value="40" data-sensitivity="300">
+                        <div class="rotary-visual"></div>
+                        <div class="rotary-indicator"></div>
+                    </div>
+                </div>
                 <div class="rotary-knob knob-sm">
                     <span class="rotary-label">MIX</span>
                     <div class="rotary-wrap">

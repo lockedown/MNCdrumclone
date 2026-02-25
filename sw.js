@@ -1,5 +1,5 @@
 // Service Worker for TR-808 Drum Machine PWA (F15)
-const CACHE_NAME = 'tr808-v2.2';
+const CACHE_NAME = 'tr808-v2.3a';
 const ASSETS = [
     './',
     './index.html',

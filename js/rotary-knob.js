@@ -4,6 +4,9 @@
 
 const KNOB_SENSITIVITY_DEFAULT = 200; // pixels for full min→max sweep
 
+// Global preference: 'vertical' (up/down) or 'horizontal' (left/right)
+let knobDirection = localStorage.getItem('tr808-knob-dir') || 'vertical';
+
 function updateRotaryKnob(input) {
     const min = parseFloat(input.min);
     const max = parseFloat(input.max);
@@ -18,7 +21,7 @@ function _bindRotaryDrag(input) {
     if (!wrap) return;
 
     let dragging = false;
-    let startY = 0;
+    let startPos = 0;
     let startVal = 0;
     const min = parseFloat(input.min);
     const max = parseFloat(input.max);
@@ -27,14 +30,15 @@ function _bindRotaryDrag(input) {
 
     // Prevent native slider interaction — we handle it ourselves
     input.style.pointerEvents = 'none';
-    wrap.style.cursor = 'ns-resize';
+    function _cursorStyle() { return knobDirection === 'horizontal' ? 'ew-resize' : 'ns-resize'; }
+    wrap.style.cursor = _cursorStyle();
 
     wrap.addEventListener('mousedown', (e) => {
         e.preventDefault();
         dragging = true;
-        startY = e.clientY;
+        startPos = knobDirection === 'horizontal' ? e.clientX : e.clientY;
         startVal = parseFloat(input.value);
-        document.body.style.cursor = 'ns-resize';
+        document.body.style.cursor = _cursorStyle();
         document.body.style.userSelect = 'none';
     });
 
@@ -42,15 +46,16 @@ function _bindRotaryDrag(input) {
     wrap.addEventListener('touchstart', (e) => {
         e.preventDefault();
         dragging = true;
-        startY = e.touches[0].clientY;
+        startPos = knobDirection === 'horizontal' ? e.touches[0].clientX : e.touches[0].clientY;
         startVal = parseFloat(input.value);
     }, { passive: false });
 
-    function onMove(clientY) {
+    function onMove(clientX, clientY) {
         if (!dragging) return;
-        const dy = startY - clientY; // up = positive = increase
+        const pos = knobDirection === 'horizontal' ? clientX : clientY;
+        const d = knobDirection === 'horizontal' ? (pos - startPos) : (startPos - pos);
         const range = max - min;
-        const delta = (dy / sensitivity) * range;
+        const delta = (d / sensitivity) * range;
         let newVal = startVal + delta;
         // Snap to step
         newVal = Math.round(newVal / step) * step;
@@ -61,11 +66,11 @@ function _bindRotaryDrag(input) {
         }
     }
 
-    document.addEventListener('mousemove', (e) => onMove(e.clientY));
+    document.addEventListener('mousemove', (e) => onMove(e.clientX, e.clientY));
     document.addEventListener('touchmove', (e) => {
         if (dragging) {
             e.preventDefault();
-            onMove(e.touches[0].clientY);
+            onMove(e.touches[0].clientX, e.touches[0].clientY);
         }
     }, { passive: false });
 

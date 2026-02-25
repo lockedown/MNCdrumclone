@@ -240,7 +240,14 @@ class Sequencer {
             this.audio.setFilterResonance(v * v * 30);
         });
 
-        // Reverb
+        // Reverb (debounce size to avoid crackling from rapid IR regeneration)
+        let _reverbSizeTimer = null;
+        document.getElementById('reverb-size').addEventListener('input', (e) => {
+            clearTimeout(_reverbSizeTimer);
+            _reverbSizeTimer = setTimeout(() => {
+                this.audio.setReverbSize(parseFloat(e.target.value));
+            }, 150);
+        });
         document.getElementById('reverb-mix').addEventListener('input', (e) => {
             this.audio.setReverbMix(Math.sqrt(parseFloat(e.target.value) / 100));
         });
@@ -257,6 +264,15 @@ class Sequencer {
         });
         document.getElementById('delay-mix').addEventListener('input', (e) => {
             this.audio.setDelayMix(parseFloat(e.target.value) / 100);
+        });
+
+        // Voice mode toggle
+        document.getElementById('voice-mode-btn').addEventListener('click', () => {
+            const newMode = this.audio.voiceMode === '808' ? '909' : '808';
+            this.audio.setVoiceMode(newMode);
+            document.getElementById('voice-mode-btn').textContent = newMode;
+            document.getElementById('voice-mode-btn').classList.toggle('mode-909', newMode === '909');
+            document.querySelector('h1').textContent = 'TR-' + newMode + ' CLONE';
         });
 
         // Save / Load / Delete
@@ -463,6 +479,7 @@ class Sequencer {
             tempo: this.tempo,
             swing: this.swing,
             stepCount: this.stepCount,
+            voiceMode: this.audio.voiceMode,
             fx: {
                 masterVol: parseFloat(document.getElementById('master-vol').value),
                 compThreshold: parseFloat(document.getElementById('comp-threshold').value),
@@ -473,6 +490,7 @@ class Sequencer {
                 cutoff: parseFloat(document.getElementById('filter-cutoff').value),
                 resonance: parseFloat(document.getElementById('filter-res').value),
                 reverb: parseFloat(document.getElementById('reverb-mix').value),
+                reverbSize: parseFloat(document.getElementById('reverb-size').value),
                 delaySubdiv: this._delaySubdiv,
                 delayFeedback: parseFloat(document.getElementById('delay-feedback').value),
                 delayMix: parseFloat(document.getElementById('delay-mix').value)
@@ -546,6 +564,10 @@ class Sequencer {
                 document.getElementById('reverb-mix').value = fx.reverb;
                 this.audio.setReverbMix(Math.sqrt(fx.reverb / 100));
             }
+            if (fx.reverbSize !== undefined) {
+                document.getElementById('reverb-size').value = fx.reverbSize;
+                this.audio.setReverbSize(fx.reverbSize);
+            }
             if (fx.delaySubdiv !== undefined) {
                 this._delaySubdiv = fx.delaySubdiv;
                 document.getElementById('delay-time').value = fx.delaySubdiv;
@@ -559,6 +581,14 @@ class Sequencer {
                 document.getElementById('delay-mix').value = fx.delayMix;
                 this.audio.setDelayMix(fx.delayMix / 100);
             }
+        }
+
+        // Restore voice mode
+        if (data.voiceMode) {
+            this.audio.setVoiceMode(data.voiceMode);
+            document.getElementById('voice-mode-btn').textContent = data.voiceMode;
+            document.getElementById('voice-mode-btn').classList.toggle('mode-909', data.voiceMode === '909');
+            document.querySelector('h1').textContent = 'TR-' + data.voiceMode + ' CLONE';
         }
 
         // Update UI

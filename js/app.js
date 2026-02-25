@@ -9,6 +9,31 @@ document.addEventListener('DOMContentLoaded', () => {
     visualiser._drawIdle();
     document.getElementById('app-version').textContent = 'v' + APP_VERSION;
 
+    // Settings panel toggle
+    const settingsToggle = document.getElementById('settings-toggle');
+    const settingsPopup = document.getElementById('settings-popup');
+    settingsToggle.addEventListener('click', (e) => {
+        e.stopPropagation();
+        settingsPopup.classList.toggle('open');
+    });
+    document.addEventListener('click', (e) => {
+        if (!settingsPopup.contains(e.target) && e.target !== settingsToggle) {
+            settingsPopup.classList.remove('open');
+        }
+    });
+
+    // Knob direction preference
+    const knobDirSelect = document.getElementById('pref-knob-dir');
+    knobDirSelect.value = knobDirection;
+    knobDirSelect.addEventListener('change', (e) => {
+        knobDirection = e.target.value;
+        localStorage.setItem('tr808-knob-dir', knobDirection);
+        // Update cursor on all existing knob wraps
+        document.querySelectorAll('.rotary-wrap').forEach(wrap => {
+            wrap.style.cursor = knobDirection === 'horizontal' ? 'ew-resize' : 'ns-resize';
+        });
+    });
+
     // B13: iOS Safari requires AudioContext.resume() + silent buffer inside a user gesture
     const unlockAudio = () => {
         const ctx = audioEngine.context;

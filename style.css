@@ -44,7 +44,7 @@ body {
     border-radius: 12px;
     padding: 8px 14px;
     box-shadow: 0 0 50px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.3);
-    max-width: 960px;
+    max-width: 1060px;
     width: 100%;
 }
 
@@ -176,7 +176,7 @@ h1 {
 
 .control-group {
     display: flex;
-    align-items: flex-end;
+    align-items: flex-start;
     gap: 12px;
 }
 
@@ -212,6 +212,46 @@ h1 {
 #preset-select option {
     background: var(--bg-deep);
     color: var(--accent);
+}
+
+/* Voice mode toggle */
+.voice-mode-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.voice-mode-control label {
+    font-size: 0.7em;
+    font-weight: bold;
+    color: #888;
+    letter-spacing: 0.5px;
+}
+
+.voice-mode-btn {
+    background: var(--bg-panel);
+    color: var(--accent);
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 5px 14px;
+    font-family: inherit;
+    font-weight: bold;
+    font-size: 0.85em;
+    cursor: pointer;
+    letter-spacing: 2px;
+    transition: all 0.2s ease;
+}
+
+.voice-mode-btn:hover {
+    background: var(--accent);
+    color: var(--bg-deep);
+}
+
+.voice-mode-btn.mode-909 {
+    background: var(--accent);
+    color: var(--bg-deep);
+    box-shadow: 0 0 12px hsla(var(--accent-h), var(--accent-s), var(--accent-l), 0.5);
 }
 
 /* Playback buttons */
@@ -253,11 +293,12 @@ h1 {
 /* ===== FX Strip ===== */
 .fx-strip {
     display: flex;
-    align-items: stretch;
+    align-items: center;
     justify-content: center;
-    gap: 14px;
+    gap: 8px;
     margin-bottom: 4px;
-    padding: 4px 14px;
+    padding: 6px 10px;
+    overflow: visible;
     background: var(--bg-panel);
     border: 1px solid var(--accent-dark);
     border-radius: 8px;
@@ -266,7 +307,7 @@ h1 {
 .fx-group {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 6px;
 }
 
 .fx-label {
@@ -276,10 +317,8 @@ h1 {
     color: var(--accent);
     writing-mode: vertical-rl;
     transform: rotate(180deg);
-    align-self: stretch;
-    display: flex;
-    align-items: center;
     margin-right: 2px;
+    flex-shrink: 0;
 }
 
 .fx-group select {
@@ -659,6 +698,77 @@ h1 {
     pointer-events: none;
     transform: translate(-50%, -50%);
     box-shadow: 0 0 4px rgba(0,0,0,0.5);
+}
+
+/* ===== Settings panel ===== */
+.settings-wrapper {
+    position: relative;
+}
+
+.settings-toggle {
+    background: var(--bg-panel);
+    color: #888;
+    border: 2px solid #555;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    font-size: 1.1em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.settings-toggle:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.settings-popup {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    margin-top: 8px;
+    background: var(--bg-panel);
+    border: 2px solid var(--accent-dark);
+    border-radius: 8px;
+    padding: 12px 16px;
+    z-index: 100;
+    min-width: 180px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+}
+
+.settings-popup.open {
+    display: block;
+}
+
+.settings-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.settings-label {
+    font-size: 0.75em;
+    color: #aaa;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.settings-row select {
+    background: var(--bg-deep);
+    color: var(--accent);
+    border: 1px solid var(--accent-dark);
+    border-radius: 4px;
+    padding: 3px 6px;
+    font-family: inherit;
+    font-size: 0.7em;
+    cursor: pointer;
+    outline: none;
 }
 
 /* ===== Visualiser (F14) ===== */

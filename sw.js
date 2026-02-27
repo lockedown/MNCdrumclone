@@ -1,5 +1,5 @@
 // Service Worker for TR-808 Drum Machine PWA (F15)
-const CACHE_NAME = 'tr808-v2.3a';
+const CACHE_NAME = 'tr808-v2.4';
 const ASSETS = [
     './',
     './index.html',
@@ -14,6 +14,7 @@ const ASSETS = [
     './js/audio-engine.js',
     './js/color-wheel.js',
     './js/visualiser.js',
+    './js/wav-exporter.js',
     './js/sequencer.js',
     './js/keyboard.js',
     './js/app.js'

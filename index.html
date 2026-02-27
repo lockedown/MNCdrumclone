@@ -76,6 +76,7 @@
                     <button id="stop-btn">STOP</button>
                     <button id="clear-btn">CLEAR</button>
                     <button id="random-btn" title="Randomize pattern">&#x1F3B2;</button>
+                    <button id="export-btn" title="Export WAV">EXPORT</button>
                 </div>
                 <div class="color-picker-wrapper">
                     <button class="color-picker-toggle" id="color-toggle" title="Change colour"></button>
@@ -239,6 +240,26 @@
         <span id="app-version"></span> · &copy; MNCWare 2026
     </footer>
 
+    <!-- Export dialog -->
+    <div class="export-overlay" id="export-overlay">
+        <div class="export-dialog">
+            <h3>Export WAV</h3>
+            <div class="export-row">
+                <label for="export-loops">Loops</label>
+                <input type="number" id="export-loops" min="1" max="16" value="1">
+            </div>
+            <div class="export-row">
+                <label for="export-fx">FX</label>
+                <button id="export-fx-toggle" class="export-toggle">OFF</button>
+            </div>
+            <div class="export-actions">
+                <button id="export-go" class="export-action-btn">Export</button>
+                <button id="export-cancel" class="export-action-btn export-cancel-btn">Cancel</button>
+            </div>
+            <div id="export-status" class="export-status"></div>
+        </div>
+    </div>
+
     <script src="js/constants.js"></script>
     <script src="js/presets.js"></script>
     <script src="js/euclidean.js"></script>
@@ -246,6 +267,7 @@
     <script src="js/audio-engine.js"></script>
     <script src="js/color-wheel.js"></script>
     <script src="js/visualiser.js"></script>
+    <script src="js/wav-exporter.js"></script>
     <script src="js/sequencer.js"></script>
     <script src="js/keyboard.js"></script>
     <script src="js/app.js"></script>

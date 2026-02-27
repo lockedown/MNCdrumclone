@@ -34,6 +34,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // F17: WAV Export dialog
+    const wavExporter = new WavExporter(sequencer);
+    const exportOverlay = document.getElementById('export-overlay');
+    const exportFxToggle = document.getElementById('export-fx-toggle');
+    let exportFxOn = false;
+
+    document.getElementById('export-btn').addEventListener('click', () => {
+        document.getElementById('export-loops').value = 1;
+        exportFxOn = false;
+        exportFxToggle.textContent = 'OFF';
+        exportFxToggle.classList.remove('active');
+        document.getElementById('export-status').textContent = '';
+        exportOverlay.classList.add('open');
+    });
+
+    exportFxToggle.addEventListener('click', () => {
+        exportFxOn = !exportFxOn;
+        exportFxToggle.textContent = exportFxOn ? 'ON' : 'OFF';
+        exportFxToggle.classList.toggle('active', exportFxOn);
+    });
+
+    document.getElementById('export-go').addEventListener('click', async () => {
+        const loops = Math.max(1, Math.min(16, parseInt(document.getElementById('export-loops').value) || 1));
+        const statusEl = document.getElementById('export-status');
+        statusEl.textContent = 'Rendering...';
+        try {
+            await wavExporter.export({ loops, withFX: exportFxOn });
+            statusEl.textContent = 'Done!';
+            setTimeout(() => exportOverlay.classList.remove('open'), 800);
+        } catch (err) {
+            statusEl.textContent = 'Error: ' + err.message;
+        }
+    });
+
+    document.getElementById('export-cancel').addEventListener('click', () => {
+        exportOverlay.classList.remove('open');
+    });
+
+    exportOverlay.addEventListener('click', (e) => {
+        if (e.target === exportOverlay) exportOverlay.classList.remove('open');
+    });
+
     // B13: iOS Safari requires AudioContext.resume() + silent buffer inside a user gesture
     const unlockAudio = () => {
         const ctx = audioEngine.context;

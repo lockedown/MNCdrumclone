@@ -728,6 +728,9 @@ class Sequencer {
         this._highlightIdx = 0;
         document.getElementById('play-btn').classList.add('active');
 
+        // Ensure delay is synced to current tempo when starting playback
+        this._updateDelayTime();
+
         this._startHighlightLoop();
         this._scheduler();
         if (this.visualiser) this.visualiser.start();

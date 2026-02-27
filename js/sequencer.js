@@ -169,7 +169,24 @@ class Sequencer {
         // Playback
         document.getElementById('play-btn').addEventListener('click', () => this.togglePlay());
         document.getElementById('stop-btn').addEventListener('click', () => this.stop());
-        document.getElementById('clear-btn').addEventListener('click', () => this.clearPattern());
+        document.getElementById('clear-btn').addEventListener('click', () => {
+            document.getElementById('clear-overlay').classList.add('open');
+        });
+
+        document.getElementById('clear-confirm').addEventListener('click', () => {
+            this.clearPattern();
+            document.getElementById('clear-overlay').classList.remove('open');
+        });
+
+        document.getElementById('clear-cancel').addEventListener('click', () => {
+            document.getElementById('clear-overlay').classList.remove('open');
+        });
+
+        document.getElementById('clear-overlay').addEventListener('click', (e) => {
+            if (e.target === e.currentTarget) {
+                document.getElementById('clear-overlay').classList.remove('open');
+            }
+        });
         document.getElementById('random-btn').addEventListener('click', () => this.randomizeAll());
 
         // Preset selector
